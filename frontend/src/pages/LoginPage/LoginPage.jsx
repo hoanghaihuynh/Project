@@ -9,11 +9,11 @@ import LoadingComponent from '../../components/LoadingComponent/LoadingComponent
 import * as message from '../../components/Messages/Message';;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   const mutation = useMutationHooks(
-    data => UserService.loginUser(data)
+    (data) => UserService.loginUser(data)
   )
   const { data, isPending, isSuccess, isError } = mutation;
   useEffect(() => {
@@ -33,7 +33,6 @@ const LoginPage = () => {
   
   const handleOnChangesUsername = (value) => {
     setUsername(value);
-    
   }
 
   const handleOnChangesPassword = (value) => {

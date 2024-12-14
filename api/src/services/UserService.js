@@ -6,19 +6,19 @@ const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
         const { username, password } = newUser;
         try {
-            // Check if the username already exists
+            // Kiểm tra trùng
             const checkUsername = await User.findOne({ username: username });
             if (checkUsername !== null) {
                 return resolve({
                     status: "ERR",
-                    message: 'Username bị trùng',
+                    message: 'Tài khoản này đã tồn tại',
                 });
             }
 
-            // Hash the password if username is available
+            // Mã hóa mật khẩu
             let hash = bcrypt.hashSync(password, 10);
 
-            // Create new user with the hashed password
+            // Tạo user mới với mk đc mã hóa
             const createdUser = await User.create({
                 username,
                 password: hash
@@ -36,7 +36,6 @@ const createUser = (newUser) => {
         }
     });
 }
-
 
 // Login User
 const loginUser = (userLogin) => {
