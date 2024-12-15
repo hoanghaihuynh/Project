@@ -5,9 +5,11 @@ const ButtonComponent = ({ size, styleButton, styleTextButton, textButton, disab
         <Button 
             style = {{
                 ...styleButton,
-                background: (disabled) ? '#3554d1' : styleButton.background
+                fontFamily: "Inter, sans-serif",
+                background: (disabled) ? '#367AFF' : styleButton.background
             }}
             size={size}
+            
             {...rests}
         >
            <span style={styleTextButton} > {textButton}</span>

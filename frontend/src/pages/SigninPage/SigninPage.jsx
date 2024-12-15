@@ -90,13 +90,26 @@ const SigninPage = () => {
                 </div>
               </div>
 
-              <button
-                type="submit"
+              <ButtonComponent
+                disabled={!username.length || !password.length}
                 onClick={handleRegister}
-                className="w-full bg-blue-500 text-white py-5 rounded-lg hover:bg-blue-700 transition duration-200"
-              >
-                Sign up
-              </button>
+                border={false}
+                size={40}
+                styleButton={{
+                  width: "100%",
+                  background: "#367AFF",
+                  height: "54px",
+                  border: "none",
+                  borderRadius: "4px",
+                  margin: "0 0 0",
+                }}
+                textButton={"Sign up"}
+                styleTextButton={{
+                  color: "#fff",
+                  fontSize: "12px",
+                  fontWeight: "500",
+                }}
+              ></ButtonComponent>
             </form>
             <div className="flex items-center my-4">
               <hr className="flex-grow border-gray-300" />

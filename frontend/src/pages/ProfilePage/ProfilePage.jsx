@@ -72,20 +72,26 @@ const ProfilePage = () => {
             </Form.Item>
 
             <Form.Item>
-                <ButtonComponent
+            <ButtonComponent
+                disabled={!username.length || !password.length}
                 onClick={handleUpdate}
                 border={false}
                 size={40}
                 styleButton={{
-                    background: '#1890ff',
-                    height: '48px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    width: '100%', // Đặt chiều rộng 100% cho nút
+                  width: "100%",
+                  background: "#367AFF",
+                  height: "54px",
+                  border: "none",
+                  borderRadius: "4px",
+                  margin: "0 0 0",
                 }}
-                textButton={'Cập nhật'}
-                styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-                />
+                textButton={"Submit"}
+                styleTextButton={{
+                  color: "#fff",
+                  fontSize: "12px",
+                  fontWeight: "500",
+                }}
+              ></ButtonComponent>
             </Form.Item>
             </Form>
         </WrapperContentProfile>

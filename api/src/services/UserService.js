@@ -1,156 +1,150 @@
 const User = require("../models/UserModel");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const { generalAccessToken, generalRefreshToken } = require("./JwtService");
 
 const createUser = (newUser) => {
-    return new Promise(async (resolve, reject) => {
-        const { username, password } = newUser;
-        try {
-            // Kiểm tra trùng
-            const checkUsername = await User.findOne({ username: username });
-            if (checkUsername !== null) {
-                return resolve({
-                    status: "ERR",
-                    message: 'Tài khoản này đã tồn tại',
-                });
-            }
+  return new Promise(async (resolve, reject) => {
+    const { username, password } = newUser;
+    try {
+      // Kiểm tra trùng
+      const checkUsername = await User.findOne({ username: username });
+      if (checkUsername !== null) {
+        return resolve({
+          status: "ERR",
+          message: "Tài khoản này đã tồn tại",
+        });
+      }
 
-            // Mã hóa mật khẩu
-            let hash = bcrypt.hashSync(password, 10);
+      // Mã hóa mật khẩu
+      let hash = bcrypt.hashSync(password, 10);
 
-            // Tạo user mới với mk đc mã hóa
-            const createdUser = await User.create({
-                username,
-                password: hash
-            });
+      // Tạo user mới với mk đc mã hóa
+      const createdUser = await User.create({
+        username,
+        password: hash,
+      });
 
-            if (createdUser) {
-                resolve({
-                    message: 'Đăng ký thành công',
-                    code: 200,
-                    data: createdUser
-                });
-            }
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
+      if (createdUser) {
+        resolve({
+          message: "Đăng ký thành công",
+          code: 200,
+          data: createdUser,
+        });
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 
 // Login User
 const loginUser = (userLogin) => {
-    return new Promise(async (resolve, reject) => {
-        const { username, password } = userLogin;
-        try {
-            const checkUsername = await User.findOne({
-                username: username 
-            });
-            if (checkUsername === null) {
-                resolve({
-                    status: 'ERR',
-                    message: 'Sai mật khẩu hoặc tài khoản không tồn tại',
-                })
-            }
+  return new Promise(async (resolve, reject) => {
+    const { username, password } = userLogin;
+    try {
+      const checkUsername = await User.findOne({
+        username: username
+      });
+      if (checkUsername === null) {
+        resolve({
+          status: "ERR",
+          message: "Sai mật khẩu hoặc tài khoản không tồn tại!",
+        });
+      }
 
-            // so sánh mk
-            const comparePassword = bcrypt.compareSync(password, checkUsername.password);
-            
-            // mk sai
-            if (!comparePassword) {
-                resolve({
-                    status: 'ERR',
-                    message: 'Sai mật khẩu',
-                })
-            }
+      // so sánh mk
+      const comparePassword = bcrypt.compareSync(
+        password,
+        checkUsername.password
+      );
 
-            // 
-            const access_token = await generalAccessToken({
-                id: checkUsername.id
-            });
-            // console.log('Access token: ', access_token);
+      // mk sai
+      if (!comparePassword) {
+        resolve({
+          status: "ERR",
+          message: "Sai mật khẩu",
+        });
+      }
 
-            //
-            const refresh_token = await generalRefreshToken({
-                id: checkUsername.id
-            });
-            // console.log("Refresh token: ",refresh_token);
+      //
+      const access_token = await generalAccessToken({
+        id: checkUsername.id,
+      });
+      // console.log('Access token: ', access_token);
 
-            resolve({
-                message: 'Đăng nhập thành công',
-                code: 200,
-                access_token: access_token,
-                refresh_token: refresh_token,
-                data: checkUsername
-            });
-          
-        }
-        catch (err) {
-            reject(err);
-        }
-    }) 
-}
+      //
+      const refresh_token = await generalRefreshToken({
+        id: checkUsername.id,
+      });
+      // console.log("Refresh token: ",refresh_token);
 
+      resolve({
+        message: "Đăng nhập thành công",
+        code: 200,
+        access_token: access_token,
+        refresh_token: refresh_token,
+        data: checkUsername,
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 
 // Update User
-const updateUser = (id,data) => {
-    return new Promise(async (resolve, reject) => {
+const updateUser = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUsername = await User.findOne({
+        _id: id,
+      });
+      // console.log('Check user: ', checkUsername);
+      if (checkUsername === null) {
+        resolve({
+          message: "Không tồn tại user này",
+        });
+      }
 
-        try {
-            const checkUsername = await User.findOne({
-                _id: id
-            });
-            // console.log('Check user: ', checkUsername);
-            if (checkUsername === null) {
-                resolve({
-                    message: 'Không tồn tại user này',
-                })
-            }
+      const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
+      // console.log("update user", updatedUser);
 
-            const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
-            // console.log("update user", updatedUser);
-
-            resolve({
-                message: 'Tìm thấy User ID và Update User THÀNH CÔNG',
-                code: 200,
-                data: updatedUser
-            });
-          
-        }
-        catch (err) {
-            reject(err);
-        }
-    }) 
-}
+      resolve({
+        message: "Tìm thấy User ID và Update User THÀNH CÔNG",
+        code: 200,
+        data: updatedUser,
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 
 // Detail User
-const getUser = (id,data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const checkUsername = await User.findOne({
-                id: id
-            });
-            // console.log('Check user: ', checkUsername);
+const getUser = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUsername = await User.findOne({
+        id: id,
+      });
+      // console.log('Check user: ', checkUsername);
 
-            const userDetail = await User.findById(id, data);
-            // console.log("update user", userDetail);
+      const userDetail = await User.findById(id, data);
+      // console.log("update user", userDetail);
 
-            resolve({
-                message: 'Tìm thấy User',
-                code: 200,
-                data: userDetail
-            });
-          
-        }
-        catch (err) {
-            reject(err);
-        }
-    }) 
-}
-
+      resolve({
+        message: "Tìm thấy User",
+        code: 200,
+        data: userDetail,
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 
 module.exports = {
-    createUser,
-    loginUser,
-    updateUser,
-    getUser
-}
+  createUser,
+  loginUser,
+  updateUser,
+  getUser,
+};
