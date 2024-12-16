@@ -50,7 +50,7 @@
 
 * Chạy lệnh sau để khởi động giao diện người dùng (front-end):
 
-            npm start
+            npm run start
 
 * Giao diện người dùng sẽ chạy ở địa chỉ mặc định (ví dụ: http://localhost:3000).
 
